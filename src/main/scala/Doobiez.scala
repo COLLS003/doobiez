@@ -36,24 +36,26 @@ object Doobiez extends IOApp{
   )
 
   //get all illness
-  private def getAllIllness: IO[List[String]] = {
-    val query = sql"select name from  illness;"
-    query
-      .query[String] // This assumes that 'name' is of type String in the database
-      .to[List]
-      .transact(xa)
-  }
+//  private def getAllIllness: IO[List[String]] = {
+//    val query = sql"select name from  illness;"
+//    query
+//      .query[String] // This assumes that 'name' is of type String in the database
+//      .to[List]
+//      .transact(xa)
+//  }
   //get illness by id
-  private def getIllnessByID(id: Int): IO[Illness] = {
+  private def getIllnessByID(id: Int): IO[Option[Illness]] = {
     val query = sql"select id, name, description from illness where id = $id"
     query
       .query[Illness]
-      .unique
+      .option
       .transact(xa)
   }
+  //using streams to retrieve data considerd best was as compared to list
+  val illnessStream = sql"select name from illness".query[String].stream.compile.toList.transact(xa)
 
 
 
-  override def run(args: List[String]): IO[ExitCode] = getIllnessByID(2).debug.as(ExitCode.Success)
+  override def run(args: List[String]): IO[ExitCode] = illnessStream.debug.as(ExitCode.Success)
 
 }
