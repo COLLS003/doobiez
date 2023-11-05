@@ -125,11 +125,11 @@ VALUES
 COMMIT;
 
 -- Symptoms
-INSERT INTO symptoms (id, name, description)
+INSERT INTO symptoms (name, description)
 VALUES
-  ('3e24f77a-9c29-4e2d-a79a-53e63b075c5b', 'Fever', 'Elevated body temperature'),
-  ('40f3b6d0-34a6-4df4-bb0b-870f9a1309f5', 'Rash', 'Skin irritation or redness'),
-  ('c9e8ff2f-670d-49d9-a89e-6c1b62cc5470', 'Chest Pain', 'Discomfort in the chest area');
+  ('Fever', 'Elevated body temperature'),
+  ('Rash', 'Skin irritation or redness'),
+  ('Chest Pain', 'Discomfort in the chest area');
 COMMIT;
 
 -- Illnesses

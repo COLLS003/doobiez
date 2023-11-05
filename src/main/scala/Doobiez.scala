@@ -52,10 +52,30 @@ object Doobiez extends IOApp{
       .transact(xa)
   }
   //using streams to retrieve data considerd best was as compared to list
-  val illnessStream = sql"select name from illness".query[String].stream.compile.toList.transact(xa)
+  private val illnessStream = sql"select name from illness".query[String].stream.compile.toList.transact(xa)
+  /*using
+  --HC high level connection
+  --HPV high level prepareds statement
+  */
+  def getPatientByLocation(location: String): IO[Option[Patients]] = {
+    val queryString = sql"select ID,  name, age, location, email, password from patient where location = $location"
+    queryString
+      .query[Patients]
+      .option
+      .transact(xa)
+  }
+
+  //adding some highe level access using hpc and hp ...
+  def getSymptomByName(name: String): IO[Option[Symptoms]] = {
+    var stringQuery = sql"select id, name,  description from symptoms where name = ?"
+    HC.stream[Symptoms](
+      stringQuery[String],
+      HPS.set(name),
+      100
+    ).compile.toList.map(_.headOption).transact(xa)
+  }
 
 
-
-  override def run(args: List[String]): IO[ExitCode] = illnessStream.debug.as(ExitCode.Success)
+  override def run(args: List[String]): IO[ExitCode] = getPatientByLocation("Chicago").debug.as(ExitCode.Success)
 
 }
