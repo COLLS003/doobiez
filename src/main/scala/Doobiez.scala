@@ -57,6 +57,7 @@ object Doobiez extends IOApp{
   --HC high level connection
   --HPV high level prepareds statement
   */
+
   def getPatientByLocation(location: String): IO[Option[Patients]] = {
     val queryString = sql"select ID,  name, age, location, email, password from patient where location = $location"
     queryString
